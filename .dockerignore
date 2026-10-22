@@ -1,0 +1,11 @@
+.git
+.gitignore
+build
+dist
+db.properties
+uploads/*
+!uploads/.gitkeep
+*.log
+*.tmp
+start-tomcat.bat
+stop-tomcat.bat
