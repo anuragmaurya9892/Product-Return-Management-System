@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Product Return Management System</display-name>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- ============================================================ -->
+    <!-- FILTERS                                                      -->
+    <!-- ============================================================ -->
+    <!-- 1. CSRF Protection Filter -->
+    <filter>
+        <filter-name>CSRFFilter</filter-name>
+        <filter-class>com.productreturn.filter.CSRFFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CSRFFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 2. Authentication Filter -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.productreturn.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 3. Admin Authorization Filter -->
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>com.productreturn.filter.AdminFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ============================================================ -->
+    <!-- PUBLIC & AUTH SERVLETS                                       -->
+    <!-- ============================================================ -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductCatalogueServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.ProductCatalogueServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductCatalogueServlet</servlet-name>
+        <url-pattern>/products</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductDetailServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.ProductDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductDetailServlet</servlet-name>
+        <url-pattern>/product</url-pattern>
+    </servlet-mapping>
+
+    <!-- ============================================================ -->
+    <!-- CUSTOMER SERVLETS                                            -->
+    <!-- ============================================================ -->
+    <servlet>
+        <servlet-name>CustomerDashboardServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.CustomerDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerDashboardServlet</servlet-name>
+        <url-pattern>/customer/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.OrderHistoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <url-pattern>/customer/orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderDetailServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.OrderDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderDetailServlet</servlet-name>
+        <url-pattern>/customer/order</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReturnRequestServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.ReturnRequestServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>5242880</max-file-size>        <!-- 5 MB -->
+            <max-request-size>10485760</max-request-size>  <!-- 10 MB -->
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReturnRequestServlet</servlet-name>
+        <url-pattern>/customer/return/new</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReturnHistoryServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.ReturnHistoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReturnHistoryServlet</servlet-name>
+        <url-pattern>/customer/returns</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReturnDetailServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.ReturnDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReturnDetailServlet</servlet-name>
+        <url-pattern>/customer/return</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/customer/profile</url-pattern>
+    </servlet-mapping>
+
+    <!-- ============================================================ -->
+    <!-- ADMIN SERVLETS                                               -->
+    <!-- ============================================================ -->
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/admin/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminReturnServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminReturnServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminReturnServlet</servlet-name>
+        <url-pattern>/admin/returns</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminReturnDetailServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminReturnDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminReturnDetailServlet</servlet-name>
+        <url-pattern>/admin/return</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminProductServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminProductServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminProductServlet</servlet-name>
+        <url-pattern>/admin/products</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminCustomerServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminCustomerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminCustomerServlet</servlet-name>
+        <url-pattern>/admin/customers</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminOrderServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminOrderServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminOrderServlet</servlet-name>
+        <url-pattern>/admin/orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminReportServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.admin.AdminReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminReportServlet</servlet-name>
+        <url-pattern>/admin/reports</url-pattern>
+    </servlet-mapping>
+
+    <!-- Session configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- Error pages -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp?code=404</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp?code=500</location>
+    </error-page>
+
+</web-app>

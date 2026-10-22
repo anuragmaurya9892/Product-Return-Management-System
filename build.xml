@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ProductReturnSystem" default="war" basedir=".">
+    <description>
+        Product Return Management System - Ant Build File
+        Builds a WAR file for deployment to Apache Tomcat 10.1
+    </description>
+
+    <!-- ============================================================ -->
+    <!-- Properties                                                    -->
+    <!-- ============================================================ -->
+    <property name="src.dir" value="src"/>
+    <property name="test.dir" value="test"/>
+    <property name="web.dir" value="web"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="test.classes.dir" value="${build.dir}/test-classes"/>
+    <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="weblib.dir" value="${web.dir}/WEB-INF/lib"/>
+    <property name="war.name" value="productreturn"/>
+    <property name="java.source" value="17"/>
+    <property name="java.target" value="17"/>
+
+    <!-- Tomcat deployment (optional) -->
+    <property environment="env"/>
+    <property name="catalina.home" value="${env.CATALINA_HOME}"/>
+    <property name="deploy.dir" value="${catalina.home}/webapps"/>
+
+    <!-- ============================================================ -->
+    <!-- Classpaths                                                    -->
+    <!-- ============================================================ -->
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+        <fileset dir="${weblib.dir}" includes="*.jar"/>
+    </path>
+
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement location="${test.classes.dir}"/>
+    </path>
+
+    <!-- ============================================================ -->
+    <!-- Targets                                                       -->
+    <!-- ============================================================ -->
+
+    <!-- Initialize build directories -->
+    <target name="init" description="Create build directories">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${test.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <echo message="Build directories created."/>
+    </target>
+
+    <!-- Compile Java source files -->
+    <target name="compile" depends="init" description="Compile Java source files">
+        <javac srcdir="${src.dir}"
+               destdir="${classes.dir}"
+               source="${java.source}"
+               target="${java.target}"
+               release="${java.source}"
+               includeantruntime="false"
+               encoding="UTF-8"
+               debug="true"
+               deprecation="true">
+            <classpath refid="compile.classpath"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+        <echo message="Compilation successful."/>
+    </target>
+
+    <!-- Compile test classes -->
+    <target name="compile-tests" depends="compile" description="Compile test classes">
+        <javac srcdir="${test.dir}"
+               destdir="${test.classes.dir}"
+               source="${java.source}"
+               target="${java.target}"
+               release="${java.source}"
+               includeantruntime="false"
+               encoding="UTF-8"
+               debug="true">
+            <classpath refid="test.classpath"/>
+        </javac>
+        <echo message="Test compilation successful."/>
+    </target>
+
+    <!-- Run Automated Tests -->
+    <target name="test" depends="compile-tests" description="Run unit and business logic tests">
+        <java classname="org.junit.runner.JUnitCore" fork="true" failonerror="true">
+            <classpath refid="test.classpath"/>
+            <arg value="com.productreturn.ValidationUtilTest"/>
+            <arg value="com.productreturn.SecurityUtilTest"/>
+            <arg value="com.productreturn.ReturnStatusWorkflowTest"/>
+            <arg value="com.productreturn.ReturnEligibilityTest"/>
+        </java>
+        <echo message="All automated tests passed!"/>
+    </target>
+
+    <!-- Package the WAR file -->
+    <target name="war" depends="compile" description="Package the WAR file">
+        <war destfile="${dist.dir}/${war.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+            <!-- Web content (JSP, CSS, JS, images) -->
+            <fileset dir="${web.dir}">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+            <!-- Compiled classes -->
+            <classes dir="${classes.dir}"/>
+            <!-- Include db.properties if it exists (for runtime config) -->
+            <classes dir="${basedir}">
+                <include name="db.properties" if="db.properties.exists"/>
+            </classes>
+        </war>
+        <!-- Check if db.properties exists and include it -->
+        <available file="db.properties" property="db.properties.exists"/>
+        <echo message="WAR file created: ${dist.dir}/${war.name}.war"/>
+    </target>
+
+    <!-- Deploy to Tomcat -->
+    <target name="deploy" depends="war" description="Deploy WAR to Tomcat webapps">
+        <fail unless="env.CATALINA_HOME" message="CATALINA_HOME environment variable is not set!"/>
+        <copy file="${dist.dir}/${war.name}.war" todir="${deploy.dir}" overwrite="true"/>
+        <echo message="Deployed to ${deploy.dir}/${war.name}.war"/>
+    </target>
+
+    <!-- Copy db.properties into WAR classes -->
+    <target name="copy-config" description="Copy configuration files">
+        <available file="db.properties" property="db.properties.exists"/>
+        <copy file="db.properties" todir="${classes.dir}" failonerror="false"/>
+    </target>
+
+    <!-- Build with config -->
+    <target name="build" depends="compile, copy-config, war" description="Full build with config"/>
+
+    <!-- Clean build artifacts -->
+    <target name="clean" description="Clean build output">
+        <delete dir="${build.dir}"/>
+        <echo message="Build directory cleaned."/>
+    </target>
+
+    <!-- Rebuild from scratch -->
+    <target name="rebuild" depends="clean, war" description="Clean and rebuild"/>
+
+    <!-- Display project info -->
+    <target name="info" description="Display project information">
+        <echo message="===================================="/>
+        <echo message="Product Return Management System"/>
+        <echo message="===================================="/>
+        <echo message="Java Source/Target: ${java.source}"/>
+        <echo message="Source Dir: ${src.dir}"/>
+        <echo message="Web Dir: ${web.dir}"/>
+        <echo message="Build Dir: ${build.dir}"/>
+        <echo message="WAR Name: ${war.name}.war"/>
+        <echo message="CATALINA_HOME: ${catalina.home}"/>
+        <echo message="===================================="/>
+    </target>
+
+</project>

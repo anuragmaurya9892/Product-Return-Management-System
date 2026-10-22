@@ -1,0 +1,45 @@
+# Build output
+/build/
+/dist/
+
+# IDE files
+/.idea/
+/*.iml
+/.project
+/.classpath
+/.settings/
+*.swp
+*.swo
+*~
+.vscode/
+*.code-workspace
+.nb-project/
+nbproject/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local configuration (contains secrets)
+db.properties
+
+# Uploaded files (customer evidence images)
+/uploads/*
+!/uploads/.gitkeep
+
+# Compiled classes
+*.class
+
+# WAR files
+*.war
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# Tomcat work directory
+/work/

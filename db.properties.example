@@ -1,0 +1,7 @@
+# Database Configuration
+# Copy this file to db.properties and fill in your MySQL credentials.
+# NEVER commit db.properties to Git — it is gitignored.
+
+db.url=jdbc:mysql://localhost:3306/product_return_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+db.username=root
+db.password=YOUR_MYSQL_PASSWORD_HERE
