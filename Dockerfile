@@ -20,6 +20,9 @@ RUN ant war
 # Stage 2: Runtime image with Apache Tomcat 10.1
 FROM tomcat:10.1-jdk17-temurin
 
+# Disable Tomcat's internal shutdown port (8005) so cloud port scanners don't trigger shutdown warnings
+RUN sed -i 's/<Server port="8005"/<Server port="-1"/' /usr/local/tomcat/conf/server.xml
+
 # Clean out default Tomcat sample webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
