@@ -38,9 +38,9 @@ DELIMITER ;
 -- BCrypt hash of "customer123" (cost 12):
 -- ============================================================
 INSERT IGNORE INTO users (username, email, password_hash, full_name, phone, address, role) VALUES
-('john_doe', 'john@example.com', '$2a$12$LJ3m4ys3LkFqMmOyKMRWceYpJP.ghn/rkuRhrgSRqHSIK4Mxgeq6G', 'John Doe', '9876543210', '123 Main Street, Mumbai, Maharashtra 400001', 'CUSTOMER'),
-('jane_smith', 'jane@example.com', '$2a$12$LJ3m4ys3LkFqMmOyKMRWceYpJP.ghn/rkuRhrgSRqHSIK4Mxgeq6G', 'Jane Smith', '9876543211', '456 Park Avenue, Delhi, Delhi 110001', 'CUSTOMER'),
-('raj_patel', 'raj@example.com', '$2a$12$LJ3m4ys3LkFqMmOyKMRWceYpJP.ghn/rkuRhrgSRqHSIK4Mxgeq6G', 'Raj Patel', '9876543212', '789 MG Road, Bangalore, Karnataka 560001', 'CUSTOMER');
+('john_doe', 'john@example.com', '$2a$12$p9I64ga32go7yzLElOmucOwM5n9XGCL.zQjqDf/yJRk24xBjRT/cu', 'John Doe', '9876543210', '123 Main Street, Mumbai, Maharashtra 400001', 'CUSTOMER'),
+('jane_smith', 'jane@example.com', '$2a$12$p9I64ga32go7yzLElOmucOwM5n9XGCL.zQjqDf/yJRk24xBjRT/cu', 'Jane Smith', '9876543211', '456 Park Avenue, Delhi, Delhi 110001', 'CUSTOMER'),
+('raj_patel', 'raj@example.com', '$2a$12$p9I64ga32go7yzLElOmucOwM5n9XGCL.zQjqDf/yJRk24xBjRT/cu', 'Raj Patel', '9876543212', '789 MG Road, Bangalore, Karnataka 560001', 'CUSTOMER');
 
 -- ============================================================
 -- PRODUCTS - Electronics & Accessories
