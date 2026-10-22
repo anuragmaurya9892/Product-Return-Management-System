@@ -10,6 +10,17 @@ CREATE DATABASE IF NOT EXISTS product_return_db
 
 USE product_return_db;
 
+-- Drop existing tables in reverse dependency order for a clean reset
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS refunds;
+DROP TABLE IF EXISTS return_status_history;
+DROP TABLE IF EXISTS return_requests;
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- ============================================================
 -- 1. USERS TABLE
 -- ============================================================
