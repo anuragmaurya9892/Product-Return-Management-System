@@ -65,4 +65,48 @@ document.addEventListener("DOMContentLoaded", function () {
             charCountEl.textContent = descTextarea.value.length;
         });
     }
+
+    // 5. Quantity Stepper controls (+ / -)
+    document.querySelectorAll(".qty-stepper").forEach(function (stepper) {
+        const input = stepper.querySelector(".qty-input");
+        const minusBtn = stepper.querySelector("[data-qty-minus]");
+        const plusBtn = stepper.querySelector("[data-qty-plus]");
+        const autoSubmit = stepper.getAttribute("data-autosubmit") === "true";
+
+        if (!input) return;
+        const min = parseInt(input.getAttribute("min") || "1", 10);
+        const max = parseInt(input.getAttribute("max") || "10", 10);
+
+        if (minusBtn) {
+            minusBtn.addEventListener("click", function () {
+                let val = parseInt(input.value || "1", 10);
+                if (val > min) {
+                    input.value = val - 1;
+                    if (autoSubmit && input.form) input.form.submit();
+                }
+            });
+        }
+        if (plusBtn) {
+            plusBtn.addEventListener("click", function () {
+                let val = parseInt(input.value || "1", 10);
+                if (val < max) {
+                    input.value = val + 1;
+                    if (autoSubmit && input.form) input.form.submit();
+                }
+            });
+        }
+    });
+
+    // 6. Interactive Payment Method Radio Cards on Checkout
+    const paymentCards = document.querySelectorAll(".payment-card");
+    paymentCards.forEach(function (card) {
+        const radio = card.querySelector('input[type="radio"]');
+        card.addEventListener("click", function () {
+            if (radio) {
+                radio.checked = true;
+                paymentCards.forEach(function (c) { c.classList.remove("selected"); });
+                card.classList.add("selected");
+            }
+        });
+    });
 });

@@ -7,9 +7,14 @@
 
 <main class="content-wrapper">
     <div class="container">
-        <div style="margin-bottom: 2rem;">
-            <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.35rem;">My Orders</h1>
-            <p style="color: var(--text-muted);">View all your past purchases and initiate return requests on eligible delivered items.</p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+            <div>
+                <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.35rem;">My Orders</h1>
+                <p style="color: var(--text-muted);">Track your purchases, manage active orders, or request a 7-day return on delivered items.</p>
+            </div>
+            <a href="${pageContext.request.contextPath}/products" class="btn btn-primary">
+                + Place New Order
+            </a>
         </div>
 
         <jsp:include page="/includes/messages.jsp"/>
@@ -34,6 +39,7 @@
                                     <th>Order #</th>
                                     <th>Order Date</th>
                                     <th>Total Amount</th>
+                                    <th>Payment</th>
                                     <th>Delivery Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -46,9 +52,18 @@
                                         <td><c:out value="${o.orderDate}"/></td>
                                         <td><strong>₹<c:out value="${o.totalAmount}"/></strong></td>
                                         <td>
+                                            <span style="font-size: 0.82rem; font-weight: 600;"><c:out value="${o.paymentMethod != null ? o.paymentMethod : 'COD'}"/></span>
+                                            <span class="badge ${o.paymentStatus == 'PAID' ? 'badge-paid' : 'badge-pending'}" style="margin-left: 0.25rem;">
+                                                <c:out value="${o.paymentStatus != null ? o.paymentStatus : 'PENDING'}"/>
+                                            </span>
+                                        </td>
+                                        <td>
                                             <c:choose>
                                                 <c:when test="${not empty o.deliveredDate}">
                                                     <c:out value="${o.deliveredDate}"/>
+                                                </c:when>
+                                                <c:when test="${o.status == 'CANCELLED'}">
+                                                    <span style="color: var(--danger); font-size: 0.85rem;">Cancelled</span>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span style="color: var(--text-muted);">Pending delivery</span>
@@ -62,7 +77,7 @@
                                         </td>
                                         <td>
                                             <a href="${pageContext.request.contextPath}/customer/order?id=${o.id}" class="btn btn-outline btn-sm">
-                                                View Items &amp; Return
+                                                Track / Return
                                             </a>
                                         </td>
                                     </tr>

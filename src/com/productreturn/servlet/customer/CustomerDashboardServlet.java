@@ -1,5 +1,6 @@
 package com.productreturn.servlet.customer;
 
+import com.productreturn.dao.CartDAO;
 import com.productreturn.dao.OrderDAO;
 import com.productreturn.dao.ReturnRequestDAO;
 import com.productreturn.model.Order;
@@ -18,6 +19,7 @@ public class CustomerDashboardServlet extends HttpServlet {
 
     private final OrderDAO orderDAO = new OrderDAO();
     private final ReturnRequestDAO returnDAO = new ReturnRequestDAO();
+    private final CartDAO cartDAO = new CartDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,6 +27,8 @@ public class CustomerDashboardServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         int userId = user.getId();
+        session.setAttribute("cartCount", cartDAO.countUnits(userId));
+
         List<Order> orders = orderDAO.findByUserId(userId);
         List<ReturnRequest> returns = returnDAO.findByUserId(userId);
 
@@ -33,13 +37,14 @@ public class CustomerDashboardServlet extends HttpServlet {
         int pendingReturns = returnDAO.countByUserIdAndStatus(userId, "PENDING");
         int approvedReturns = returnDAO.countByUserIdAndStatus(userId, "APPROVED");
 
-        // Top 5 recent returns
+        List<Order> recentOrders = orders.size() > 5 ? orders.subList(0, 5) : orders;
         List<ReturnRequest> recentReturns = returns.size() > 5 ? returns.subList(0, 5) : returns;
 
         req.setAttribute("totalOrders", totalOrders);
         req.setAttribute("totalReturns", totalReturns);
         req.setAttribute("pendingReturns", pendingReturns);
         req.setAttribute("approvedReturns", approvedReturns);
+        req.setAttribute("recentOrders", recentOrders);
         req.setAttribute("recentReturns", recentReturns);
 
         req.getRequestDispatcher("/customer/dashboard.jsp").forward(req, resp);

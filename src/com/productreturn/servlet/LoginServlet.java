@@ -1,5 +1,6 @@
 package com.productreturn.servlet;
 
+import com.productreturn.dao.CartDAO;
 import com.productreturn.dao.UserDAO;
 import com.productreturn.model.User;
 import com.productreturn.util.SecurityUtil;
@@ -14,6 +15,7 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     private final UserDAO userDAO = new UserDAO();
+    private final CartDAO cartDAO = new CartDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -70,6 +72,7 @@ public class LoginServlet extends HttpServlet {
         // Authentication successful
         HttpSession session = req.getSession(true);
         session.setAttribute("user", user);
+        session.setAttribute("cartCount", cartDAO.countUnits(user.getId()));
 
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
             resp.sendRedirect(req.getContextPath() + "/admin/dashboard");

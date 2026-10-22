@@ -7,6 +7,7 @@ import com.productreturn.model.Order;
 import com.productreturn.model.OrderItem;
 import com.productreturn.model.ReturnRequest;
 import com.productreturn.model.User;
+import com.productreturn.util.OrderStatusRules;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -93,9 +94,36 @@ public class OrderDetailServlet extends HttpServlet {
             req.setAttribute("eligibleMap", eligibleMap);
             req.setAttribute("activeReturnMap", activeReturnMap);
             req.setAttribute("remainingQtyMap", remainingQtyMap);
+            req.setAttribute("canCancel", OrderStatusRules.canCustomerCancel(order.getStatus()));
 
             req.getRequestDispatcher("/customer/order-detail.jsp").forward(req, resp);
 
+        } catch (NumberFormatException e) {
+            resp.sendRedirect(req.getContextPath() + "/customer/orders");
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        String action = req.getParameter("action");
+        String idParam = req.getParameter("orderId");
+
+        if (!"cancel".equalsIgnoreCase(action) || idParam == null) {
+            resp.sendRedirect(req.getContextPath() + "/customer/orders");
+            return;
+        }
+
+        try {
+            int orderId = Integer.parseInt(idParam.trim());
+            boolean cancelled = orderDAO.cancelByCustomer(orderId, user.getId());
+            if (cancelled) {
+                resp.sendRedirect(req.getContextPath() + "/customer/order?id=" + orderId + "&success=Order+cancelled+and+stock+restored");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/customer/order?id=" + orderId + "&error=Order+can+only+be+cancelled+before+it+is+shipped");
+            }
         } catch (NumberFormatException e) {
             resp.sendRedirect(req.getContextPath() + "/customer/orders");
         }

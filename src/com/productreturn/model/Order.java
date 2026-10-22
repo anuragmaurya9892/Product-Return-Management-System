@@ -151,6 +151,52 @@ public class Order {
         this.user = user;
     }
 
+    // --- Checkout / fulfilment fields ---
+
+    /** Payment method: COD or ONLINE_DEMO (simulated, no real money moves). */
+    private String paymentMethod;
+
+    /** Payment status: PENDING, PAID or VOID. */
+    private String paymentStatus;
+
+    /** Shipping fee charged on this order (already included in totalAmount). */
+    private BigDecimal shippingFee;
+
+    /** Date the order was marked as shipped. */
+    private Date shippedDate;
+
+    /** When the order was cancelled, if ever. */
+    private Timestamp cancelledAt;
+
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+
+    public BigDecimal getShippingFee() { return shippingFee; }
+    public void setShippingFee(BigDecimal shippingFee) { this.shippingFee = shippingFee; }
+
+    public Date getShippedDate() { return shippedDate; }
+    public void setShippedDate(Date shippedDate) { this.shippedDate = shippedDate; }
+
+    public Timestamp getCancelledAt() { return cancelledAt; }
+    public void setCancelledAt(Timestamp cancelledAt) { this.cancelledAt = cancelledAt; }
+
+    /** Items subtotal (total minus shipping). */
+    public BigDecimal getSubtotal() {
+        if (totalAmount == null) return BigDecimal.ZERO;
+        return shippingFee == null ? totalAmount : totalAmount.subtract(shippingFee);
+    }
+
+    /** Total number of units across all loaded items. */
+    public int getItemCount() {
+        if (items == null) return 0;
+        int n = 0;
+        for (OrderItem i : items) n += i.getQuantity();
+        return n;
+    }
+
     @Override
     public String toString() {
         return "Order{" +

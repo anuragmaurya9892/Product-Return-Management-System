@@ -12,6 +12,13 @@
     </welcome-file-list>
 
     <!-- ============================================================ -->
+    <!-- CONTEXT LISTENERS                                            -->
+    <!-- ============================================================ -->
+    <listener>
+        <listener-class>com.productreturn.listener.AppInitListener</listener-class>
+    </listener>
+
+    <!-- ============================================================ -->
     <!-- FILTERS                                                      -->
     <!-- ============================================================ -->
     <!-- 1. CSRF Protection Filter -->
@@ -42,6 +49,16 @@
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 4. Customer Authorization Filter -->
+    <filter>
+        <filter-name>CustomerFilter</filter-name>
+        <filter-class>com.productreturn.filter.CustomerFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CustomerFilter</filter-name>
+        <url-pattern>/customer/*</url-pattern>
     </filter-mapping>
 
     <!-- ============================================================ -->
@@ -93,6 +110,33 @@
     <servlet-mapping>
         <servlet-name>CustomerDashboardServlet</servlet-name>
         <url-pattern>/customer/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.CartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/customer/cart</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.CheckoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/customer/checkout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderConfirmationServlet</servlet-name>
+        <servlet-class>com.productreturn.servlet.customer.OrderConfirmationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderConfirmationServlet</servlet-name>
+        <url-pattern>/customer/order/confirmation</url-pattern>
     </servlet-mapping>
 
     <servlet>

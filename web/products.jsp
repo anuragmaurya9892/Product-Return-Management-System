@@ -29,10 +29,19 @@
 
 <main class="content-wrapper">
     <div class="container">
-        <div style="margin-bottom: 2rem;">
-            <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.5rem;">Explore Products</h1>
-            <p style="color: var(--text-muted);">Browse our full inventory. All purchases qualify for our 7-day return policy.</p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.35rem;">Shop Products</h1>
+                <p style="color: var(--text-muted);">Free express shipping on orders over ₹999 • Covered by our 7-day hassle-free return guarantee.</p>
+            </div>
+            <c:if test="${not empty sessionScope.user and sessionScope.user.role != 'ADMIN'}">
+                <a href="${pageContext.request.contextPath}/customer/cart" class="btn btn-outline">
+                    🛒 View Cart (<c:out value="${sessionScope.cartCount != null ? sessionScope.cartCount : 0}"/>)
+                </a>
+            </c:if>
         </div>
+
+        <jsp:include page="/includes/messages.jsp"/>
 
         <form action="${pageContext.request.contextPath}/products" method="GET" class="filter-bar">
             <div class="filter-item" style="flex: 2 1 280px;">
@@ -72,23 +81,87 @@
                 <div class="products-grid">
                     <c:forEach var="p" items="${products}">
                         <div class="product-card">
-                            <div class="product-image-box">
+                            <a href="${pageContext.request.contextPath}/product?id=${p.id}" class="product-image-box" style="text-decoration: none; position: relative;">
                                 <span>📦</span>
-                            </div>
+                                <span style="position: absolute; top: 10px; right: 10px;">
+                                    <c:choose>
+                                        <c:when test="${p.stockQuantity <= 0}">
+                                            <span class="stock-pill out-of-stock">Out of Stock</span>
+                                        </c:when>
+                                        <c:when test="${p.stockQuantity <= 5}">
+                                            <span class="stock-pill low-stock">⚡ Only <c:out value="${p.stockQuantity}"/> left</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="stock-pill in-stock">✔ In Stock</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </a>
                             <div class="product-card-body">
                                 <span class="product-category-tag"><c:out value="${p.category}"/></span>
-                                <h3 class="product-title"><c:out value="${p.name}"/></h3>
+                                <h3 class="product-title">
+                                    <a href="${pageContext.request.contextPath}/product?id=${p.id}" style="color: var(--navy); text-decoration: none;">
+                                        <c:out value="${p.name}"/>
+                                    </a>
+                                </h3>
                                 <p class="product-description-clamp"><c:out value="${p.description}"/></p>
 
                                 <div class="product-price-row">
                                     <div>
                                         <div class="product-price">₹<c:out value="${p.price}"/></div>
-                                        <div style="font-size: 0.8rem; color: var(--text-muted);">SKU: <c:out value="${p.sku}"/></div>
+                                        <div style="font-size: 0.78rem; color: var(--text-muted);">SKU: <c:out value="${p.sku}"/></div>
                                     </div>
                                     <a href="${pageContext.request.contextPath}/product?id=${p.id}" class="btn btn-outline btn-sm">
-                                        View Details
+                                        Details
                                     </a>
                                 </div>
+
+                                <c:choose>
+                                    <c:when test="${p.stockQuantity <= 0}">
+                                        <div class="product-card-actions">
+                                            <button class="btn btn-outline btn-sm btn-block" disabled style="opacity: 0.55; cursor: not-allowed;">
+                                                Currently Unavailable
+                                            </button>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${empty sessionScope.user}">
+                                        <div class="product-card-actions">
+                                            <a href="${pageContext.request.contextPath}/login?error=Please+log+in+to+order+products" class="btn btn-primary btn-sm btn-block">
+                                                🛒 Sign in to Order
+                                            </a>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${sessionScope.user.role == 'ADMIN'}">
+                                        <div class="product-card-actions">
+                                            <a href="${pageContext.request.contextPath}/admin/products" class="btn btn-outline btn-sm btn-block">
+                                                Manage in Admin
+                                            </a>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="product-card-actions">
+                                            <form action="${pageContext.request.contextPath}/customer/cart" method="POST" style="flex: 1;">
+                                                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+                                                <input type="hidden" name="action" value="add">
+                                                <input type="hidden" name="productId" value="${p.id}">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn btn-outline btn-sm btn-block">
+                                                    + Add to Cart
+                                                </button>
+                                            </form>
+                                            <form action="${pageContext.request.contextPath}/customer/cart" method="POST" style="flex: 1;">
+                                                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+                                                <input type="hidden" name="action" value="add">
+                                                <input type="hidden" name="productId" value="${p.id}">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <input type="hidden" name="buyNow" value="1">
+                                                <button type="submit" class="btn btn-primary btn-sm btn-block">
+                                                    ⚡ Buy Now
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </c:forEach>

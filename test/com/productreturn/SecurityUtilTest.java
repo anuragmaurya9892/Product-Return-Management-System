@@ -1,7 +1,10 @@
 package com.productreturn;
 
+import com.productreturn.util.OrderStatusRules;
+import com.productreturn.util.PricingUtil;
 import com.productreturn.util.SecurityUtil;
 import org.junit.Test;
+import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 public class SecurityUtilTest {
@@ -44,8 +47,34 @@ public class SecurityUtilTest {
         assertTrue("Return number must match RET-yyyyMMdd-NNNN format: " + returnNum,
                 returnNum.matches("^RET-\\d{8}-\\d{4}$"));
 
-        assertTrue("Order number must match ORD-yyyyMMdd-NNNN format: " + orderNum,
-                orderNum.matches("^ORD-\\d{8}-\\d{4}$"));
+        assertTrue("Order number must match ORD-yyyyMMdd-NNNNNN format: " + orderNum,
+                orderNum.matches("^ORD-\\d{8}-\\d{4,6}$"));
+    }
+
+    @Test
+    public void testPricingAndFreeShippingRules() {
+        BigDecimal below = new BigDecimal("500.00");
+        assertEquals(new BigDecimal("49.00"), PricingUtil.shippingFor(below));
+        assertEquals(new BigDecimal("499.00"), PricingUtil.amountToFreeShipping(below));
+        assertEquals(new BigDecimal("549.00"), PricingUtil.grandTotal(below));
+
+        BigDecimal above = new BigDecimal("1200.00");
+        assertEquals(new BigDecimal("0.00"), PricingUtil.shippingFor(above));
+        assertEquals(new BigDecimal("0.00"), PricingUtil.amountToFreeShipping(above));
+        assertEquals(100, PricingUtil.freeShippingProgress(above));
+        assertEquals(new BigDecimal("1200.00"), PricingUtil.grandTotal(above));
+    }
+
+    @Test
+    public void testOrderFulfilmentWorkflowRules() {
+        assertTrue(OrderStatusRules.canCustomerCancel("PLACED"));
+        assertFalse(OrderStatusRules.canCustomerCancel("SHIPPED"));
+        assertFalse(OrderStatusRules.canCustomerCancel("DELIVERED"));
+
+        assertTrue(OrderStatusRules.canAdminTransition("PLACED", "SHIPPED"));
+        assertTrue(OrderStatusRules.canAdminTransition("PLACED", "CANCELLED"));
+        assertTrue(OrderStatusRules.canAdminTransition("SHIPPED", "DELIVERED"));
+        assertFalse(OrderStatusRules.canAdminTransition("DELIVERED", "CANCELLED"));
     }
 
     @Test

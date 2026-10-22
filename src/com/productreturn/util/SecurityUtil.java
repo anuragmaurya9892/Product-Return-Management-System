@@ -85,13 +85,16 @@ public class SecurityUtil {
     }
 
     /**
-     * Generates a unique order number in the format {@code ORD-yyyyMMdd-NNNN}.
+     * Generates a unique order number in the format {@code ORD-yyyyMMdd-NNNNNN}
+     * using a cryptographically strong random suffix (1 in 900,000 per day collision space).
      *
      * @return the generated order number
      */
     public static String generateOrderNumber() {
         String datePart = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        int randomPart = 1000 + RANDOM.nextInt(9000);
+        int randomPart = 100000 + SECURE_RANDOM.nextInt(900000);
         return "ORD-" + datePart + "-" + randomPart;
     }
+
+    private static final java.security.SecureRandom SECURE_RANDOM = new java.security.SecureRandom();
 }
