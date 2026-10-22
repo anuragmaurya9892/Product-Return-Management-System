@@ -40,6 +40,24 @@ public class DBConnection {
                 }
             }
 
+            // Also check Tomcat conf or CATALINA_BASE
+            if (is == null) {
+                String catalinaBase = System.getProperty("catalina.base");
+                if (catalinaBase != null) {
+                    File cf = new File(catalinaBase, "conf/" + PROPERTIES_FILE);
+                    if (cf.exists()) {
+                        is = new FileInputStream(cf);
+                    }
+                }
+            }
+
+            if (is == null) {
+                File hf = new File(System.getProperty("user.home"), PROPERTIES_FILE);
+                if (hf.exists()) {
+                    is = new FileInputStream(hf);
+                }
+            }
+
             if (is != null) {
                 try (InputStream stream = is) {
                     props.load(stream);

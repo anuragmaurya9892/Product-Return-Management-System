@@ -98,6 +98,7 @@
 
     <!-- Package the WAR file -->
     <target name="war" depends="compile" description="Package the WAR file">
+        <available file="db.properties" property="db.properties.exists"/>
         <war destfile="${dist.dir}/${war.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
             <!-- Web content (JSP, CSS, JS, images) -->
             <fileset dir="${web.dir}">
@@ -110,8 +111,6 @@
                 <include name="db.properties" if="db.properties.exists"/>
             </classes>
         </war>
-        <!-- Check if db.properties exists and include it -->
-        <available file="db.properties" property="db.properties.exists"/>
         <echo message="WAR file created: ${dist.dir}/${war.name}.war"/>
     </target>
 
